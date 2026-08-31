@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>תרגול נשימה</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0f1e;
+  --glow:#4a9eff;
+  --inhale:#4a9eff;--hold1:#a78bfa;--exhale:#34d399;--hold2:#f59e0b;
+  --break:#60cdac;--recovery:#f472b6;
+  --text:#e2eaf8;--muted:#6b87b0;
+  --card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);
+}
+body{font-family:'Heebo',sans-serif;background:radial-gradient(ellipse at 50% 0%,#1a3a6e 0%,#0a0f1e 65%);min-height:100vh;color:var(--text);display:flex;flex-direction:column;align-items:center;}
+header{width:100%;max-width:720px;padding:24px 20px 0;text-align:center;}
+header h1{font-size:1.4rem;font-weight:300;letter-spacing:.12em;color:var(--glow);}
+header p{font-size:.78rem;color:var(--muted);margin-top:3px;letter-spacing:.06em;}
+main{width:100%;max-width:720px;padding:16px 16px 48px;display:flex;flex-direction:column;gap:16px;}
+
+/* tabs */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;}
+.tab-btn{flex:1;min-width:90px;background:transparent;border:1px solid var(--border);border-radius:24px;color:var(--muted);font-family:'Heebo',sans-serif;font-size:.8rem;padding:8px 10px;cursor:pointer;transition:all .2s;}
+.tab-btn.active{background:rgba(74,158,255,0.15);border-color:var(--glow);color:var(--glow);}
+
+/* card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;}
+.card-title{font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.panel{display:none;}.panel.active{display:block;}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:.72rem;color:var(--muted);}
+.field input[type=number]{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Heebo',sans-serif;font-size:.95rem;padding:7px 10px;width:100%;outline:none;transition:border-color .2s;-moz-appearance:textfield;}
+.field input::-webkit-inner-spin-button,.field input::-webkit-outer-spin-button{-webkit-appearance:none;}
+.field input:focus{border-color:var(--glow);}
+.field.full{grid-column:1/-1;}
+
+/* wim hof round holds */
+.wh-holds{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.wh-hold-row{display:flex;align-items:center;gap:10px;font-size:.8rem;color:var(--muted);}
+.wh-hold-row input{width:80px;}
+
+/* presets row */
+.presets{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.preset-btn{background:rgba(74,158,255,0.08);border:1px solid rgba(74,158,255,0.2);border-radius:20px;color:var(--glow);font-family:'Heebo',sans-serif;font-size:.72rem;padding:4px 13px;cursor:pointer;transition:background .2s;}
+.preset-btn:hover{background:rgba(74,158,255,0.18);}
+.preset-btn.active{background:rgba(74,158,255,0.28);border-color:var(--glow);}
+
+/* orb stage */
+.stage{display:flex;flex-direction:column;align-items:center;padding:8px 0 16px;gap:14px;}
+.orb-wrap{position:relative;width:190px;height:190px;display:flex;align-items:center;justify-content:center;}
+.ring{position:absolute;border-radius:50%;border:1.5px solid rgba(74,158,255,.3);opacity:0;pointer-events:none;}
+.ring-1{width:190px;height:190px;}.ring-2{width:220px;height:220px;}
+@keyframes ringPulse{0%{opacity:.5;transform:scale(.88);}100%{opacity:0;transform:scale(1.1);}}
+.orb{width:124px;height:124px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#6bb8ff,#1a5cbf 60%,#0a1f5c);box-shadow:0 0 36px rgba(74,158,255,.5),0 0 70px rgba(74,158,255,.18),inset 0 0 18px rgba(255,255,255,.1);will-change:transform;position:relative;z-index:1;transition:box-shadow .3s;}
+.phase-label{font-size:1.05rem;font-weight:300;letter-spacing:.08em;min-height:1.5em;text-align:center;transition:color .3s;}
+.phase-bar-wrap{width:190px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.phase-bar{height:100%;width:0%;background:var(--glow);border-radius:2px;transition:background .3s;}
+.sub-label{font-size:.78rem;color:var(--muted);text-align:center;min-height:1.2em;}
+.stats-row{display:flex;gap:28px;justify-content:center;font-size:.75rem;color:var(--muted);}
+.stat-val{font-size:1rem;color:var(--text);font-weight:400;}
+
+/* controls */
+.controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:50px;color:#fff;font-family:'Heebo',sans-serif;font-size:.92rem;font-weight:600;padding:11px 34px;cursor:pointer;box-shadow:0 4px 18px rgba(37,99,235,.4);transition:transform .15s,box-shadow .2s;letter-spacing:.04em;}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 24px rgba(37,99,235,.5);}
+.btn-primary:disabled{opacity:.35;cursor:default;}
+.btn-secondary{background:transparent;border:1px solid var(--border);border-radius:50px;color:var(--muted);font-family:'Heebo',sans-serif;font-size:.88rem;padding:11px 26px;cursor:pointer;transition:border-color .2s,color .2s;}
+.btn-secondary:hover:not(:disabled){border-color:var(--muted);color:var(--text);}
+.btn-secondary:disabled{opacity:.28;cursor:default;}
+.sound-row{display:flex;align-items:center;gap:9px;font-size:.78rem;color:var(--muted);justify-content:center;margin-top:12px;}
+.sound-opt{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;color:var(--muted);font-family:'Heebo',sans-serif;font-size:.78rem;padding:6px 14px;cursor:pointer;transition:all .2s;}
+.sound-opt:hover{border-color:var(--muted);color:var(--text);}
+.sound-opt.active{background:rgba(74,158,255,0.15);border-color:var(--glow);color:var(--glow);}
+
+/* finished */
+.finished-banner{display:none;position:fixed;inset:0;background:rgba(10,15,30,.9);backdrop-filter:blur(8px);align-items:center;justify-content:center;z-index:50;flex-direction:column;gap:14px;text-align:center;}
+.finished-banner.show{display:flex;}
+.finished-banner h2{font-size:1.5rem;font-weight:300;color:var(--glow);letter-spacing:.08em;}
+.finished-banner p{color:var(--muted);font-size:.88rem;}
+
+/* info box */
+.info-box{background:rgba(74,158,255,0.06);border:1px solid rgba(74,158,255,0.15);border-radius:10px;padding:10px 14px;font-size:.75rem;color:var(--muted);line-height:1.6;margin-top:12px;}
+.info-box b{color:var(--text);}
+</style>
+</head>
+<body>
+<header>
+  <h1>תרגול נשימה</h1>
+  <p>הנשמה שלך, הקצב שלך</p>
+</header>
+<main>
+
+<!-- Tab selector -->
+<div class="card" style="padding:14px 16px;">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="free">חופשי</button>
+    <button class="tab-btn" data-tab="box">נשימת קופסא</button>
+    <button class="tab-btn" data-tab="wim">Wim Hof</button>
+  </div>
+</div>
+
+<!-- ══ Settings Card ══ -->
+<div class="card" id="settingsCard">
+
+  <!-- FREE -->
+  <div class="panel active" id="panel-free">
+    <div class="card-title">תרגול חופשי</div>
+    <div class="presets" id="free-presets">
+      <button class="preset-btn" data-pre="478">4-7-8</button>
+      <button class="preset-btn" data-pre="box4">Box 4</button>
+      <button class="preset-btn" data-pre="calm">נשימה רגועה</button>
+    </div>
+    <div class="grid">
+      <div class="field"><label>משך (דקות)</label><input type="number" id="f-duration" value="5" min="1" max="60" step="1"></div>
+      <div class="field"><label>שאיפה (שנ')</label><input type="number" id="f-inhale" value="4" min="0.5" max="20" step="0.5"></div>
+      <div class="field"><label>עצירה אחרי שאיפה</label><input type="number" id="f-hold1" value="0" min="0" max="20" step="0.5"></div>
+      <div class="field"><label>נשיפה (שנ')</label><input type="number" id="f-exhale" value="4" min="0.5" max="20" step="0.5"></div>
+      <div class="field"><label>עצירה אחרי נשיפה</label><input type="number" id="f-hold2" value="0" min="0" max="20" step="0.5"></div>
+    </div>
+  </div>
+
+  <!-- BOX -->
+  <div class="panel" id="panel-box">
+    <div class="card-title">נשימת קופסא</div>
+    <div class="grid">
+      <div class="field"><label>אורך צלע (שנ')</label><input type="number" id="b-side" value="4" min="1" max="20" step="0.5"></div>
+      <div class="field"><label>משך (דקות)</label><input type="number" id="b-duration" value="5" min="1" max="60" step="1"></div>
+    </div>
+    <div class="info-box" id="box-summary">שאיפה 4″ · עצירה 4″ · נשיפה 4″ · עצירה 4″</div>
+  </div>
+
+  <!-- WIM HOF -->
+  <div class="panel" id="panel-wim">
+    <div class="card-title">Wim Hof</div>
+    <div class="grid">
+      <div class="field"><label>מספר סבבים</label><input type="number" id="w-rounds" value="3" min="1" max="10" step="1"></div>
+      <div class="field"><label>קצב נשימה (שנ')</label><input type="number" id="w-pace" value="5" min="1" max="15" step="0.5"></div>
+    </div>
+    <div class="info-box">30 נשימות לסבב · שאיפה + נשיפה לפי קצב · עצירה · שאיפה 15″ · נשיפה · הפסקה 7″ בין סבבים</div>
+    <div class="wh-holds" id="wh-holds"></div>
+  </div>
+
+</div>
+
+<!-- ══ Practice Card ══ -->
+<div class="card" id="practiceCard">
+  <div class="stage">
+    <div class="orb-wrap">
+      <div class="ring ring-1" id="ring1"></div>
+      <div class="ring ring-2" id="ring2"></div>
+      <div class="orb" id="orb"></div>
+    </div>
+    <div class="phase-label" id="phaseLabel">מוכן להתחיל</div>
+    <div class="phase-bar-wrap"><div class="phase-bar" id="phaseBar"></div></div>
+    <div class="sub-label" id="subLabel"></div>
+    <div class="stats-row">
+      <div style="text-align:center"><div class="stat-val" id="statA">—</div><div id="statALabel">מחזורים</div></div>
+      <div style="text-align:center"><div class="stat-val" id="statB">—</div><div>נותרו</div></div>
+    </div>
+  </div>
+  <div class="controls">
+    <button class="btn-primary" id="startBtn">התחל</button>
+    <button class="btn-secondary" id="stopBtn" disabled>עצור</button>
+  </div>
+  <div class="sound-row" style="gap:6px;flex-wrap:wrap;">
+    <button class="sound-opt active" data-mode="tones">🎵 צלילים</button>
+    <button class="sound-opt" data-mode="breath">🌬️ נשימה</button>
+    <button class="sound-opt" data-mode="off">🔇 שקט</button>
+  </div>
+</div>
+
+</main>
+<div class="finished-banner" id="finishedBanner">
+  <h2>✨ תרגול הושלם</h2>
+  <p id="finishedStats"></p>
+  <button class="btn-primary" onclick="closeBanner()">תרגול חדש</button>
+</div>
+
+<script>
+/* ════════════════════════════════
+   AUDIO ENGINE
+   ════════════════════════════════ */
+let audioCtx = null;
+function getCtx(){
+  if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+const PHASE_FREQ={inhale:329.63,exhale:246.94,hold1:98,hold2:98,recovery:196,break:130.81};
+
+let activeNodes=null,activeGain=null;
+
+function stopActiveSound(fadeDur=0.4){
+  if(!activeGain) return;
+  const ctx=getCtx(),now=ctx.currentTime;
+  activeGain.gain.setValueAtTime(activeGain.gain.value,now);
+  activeGain.gain.linearRampToValueAtTime(0.0001,now+fadeDur);
+  const nodes=activeNodes;
+  setTimeout(()=>{if(nodes)nodes.forEach(n=>{try{n.stop();}catch(e){}});},( fadeDur+0.15)*1000);
+  activeNodes=null;activeGain=null;
+}
+
+function startFluteTone(freq){
+  stopActiveSound(0.3);
+  const ctx=getCtx(),now=ctx.currentTime;
+  const master=ctx.createGain();
+  master.gain.setValueAtTime(0,now);
+  master.gain.setTargetAtTime(0.20,now,0.32);
+  master.connect(ctx.destination);
+  const lpf=ctx.createBiquadFilter();lpf.type='lowpass';lpf.frequency.value=1800;lpf.Q.value=0.5;lpf.connect(master);
+  const osc=(f,amp)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;g.gain.value=amp;o.connect(g);g.connect(lpf);o.start(now);return o;};
+  const fund=osc(freq,1.0),h2=osc(freq*2,0.22),h3=osc(freq*3,0.06);
+  const trem=ctx.createOscillator(),tremG=ctx.createGain();
+  trem.frequency.value=4.2;tremG.gain.value=0.015;trem.connect(tremG);tremG.connect(master.gain);trem.start(now);
+  activeNodes=[fund,h2,h3,trem];activeGain=master;
+}
+
+function startHumTone(freq){
+  stopActiveSound(0.4);
+  const ctx=getCtx(),now=ctx.currentTime;
+  const master=ctx.createGain();
+  master.gain.setValueAtTime(0,now);
+  master.gain.setTargetAtTime(0.22,now,0.5);
+  master.connect(ctx.destination);
+  const lpf=ctx.createBiquadFilter();lpf.type='lowpass';lpf.frequency.value=600;lpf.Q.value=0.8;lpf.connect(master);
+  const osc=(f,amp)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;g.gain.value=amp;o.connect(g);g.connect(lpf);o.start(now);return o;};
+  const sub=osc(freq*0.5,0.30),fund=osc(freq,1.0),h2=osc(freq*2,0.48),h3=osc(freq*3,0.18),h4=osc(freq*4,0.05);
+  const swell=ctx.createOscillator(),swellG=ctx.createGain();
+  swell.frequency.value=0.12;swellG.gain.value=0.02;swell.connect(swellG);swellG.connect(master.gain);swell.start(now);
+  activeNodes=[sub,fund,h2,h3,h4,swell];activeGain=master;
+}
+
+function startSound(phaseId, phaseDurSec){
+  if(soundMode==='off') return;
+  if(soundMode==='breath'){
+    if(phaseId==='inhale'||phaseId==='recovery') startBreathSound(true, phaseDurSec);
+    else if(phaseId==='exhale') startBreathSound(false, phaseDurSec);
+    else startHumTone(PHASE_FREQ[phaseId]||98); // holds still use hum
+  } else {
+    // tones mode
+    if(phaseId==='inhale'||phaseId==='exhale'||phaseId==='recovery') startFluteTone(PHASE_FREQ[phaseId]);
+    else startHumTone(PHASE_FREQ[phaseId]||98);
+  }
+}
+
+/* ════════════════════════════════
+   UI HELPERS
+   ════════════════════════════════ */
+const PHASE_COLORS={inhale:'#4a9eff',hold1:'#a78bfa',exhale:'#34d399',hold2:'#f59e0b',break:'#60cdac',recovery:'#f472b6'};
+const PHASE_LABELS={inhale:'שאף',hold1:'עצור',exhale:'נשוף',hold2:'עצור',break:'הפסקה',recovery:'שאיפת התאוששות'};
+
+const orb=document.getElementById('orb');
+const ring1=document.getElementById('ring1'),ring2=document.getElementById('ring2');
+const phaseLabel=document.getElementById('phaseLabel');
+const phaseBar=document.getElementById('phaseBar');
+const subLabel=document.getElementById('subLabel');
+const statA=document.getElementById('statA'),statB=document.getElementById('statB');
+const statALabel=document.getElementById('statALabel');
+const startBtn=document.getElementById('startBtn'),stopBtn=document.getElementById('stopBtn');
+const soundToggle=document.getElementById('soundToggle');
+const finishedBanner=document.getElementById('finishedBanner');
+const finishedStats=document.getElementById('finishedStats');
+
+/* ════════════════════════════════
+   BREATH SOUND ENGINE — Human breath synthesis
+   Layers:
+   1. Turbulent airflow noise (glottis/throat)
+   2. Nasal/oral resonance formants
+   3. Chest cavity low rumble
+   4. Dynamic amplitude envelope matching real breath curve
+   ════════════════════════════════ */
+
+// Pre-generate a single shared noise buffer (avoids repeat pops)
+let _noiseBuffer = null;
+function getNoiseBuffer(ctx) {
+  if (_noiseBuffer && _noiseBuffer.sampleRate === ctx.sampleRate) return _noiseBuffer;
+  const len = ctx.sampleRate * 4;
+  const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  // Pink-ish noise: integrate white noise for softer texture
+  let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0;
+  for(let i=0;i<len;i++){
+    const wh = Math.random()*2-1;
+    b0=0.99886*b0+wh*0.0555179; b1=0.99332*b1+wh*0.0750759;
+    b2=0.96900*b2+wh*0.1538520; b3=0.86650*b3+wh*0.3104856;
+    b4=0.55000*b4+wh*0.5329522; b5=-0.7616*b5-wh*0.0168980;
+    d[i] = (b0+b1+b2+b3+b4+b5+wh*0.5362)*0.11;
+  }
+  _noiseBuffer = buf;
+  return buf;
+}
+
+function startBreathSound(isInhale, durationSec) {
+  stopActiveSound(0.12);
+  const ctx = getCtx(), now = ctx.currentTime;
+  const dur = Math.max(durationSec, 1.0);
+  const allNodes = [];
+
+  // ── Master output gain ──
+  const master = ctx.createGain();
+  master.gain.setValueAtTime(0.0001, now);
+  master.connect(ctx.destination);
+
+  // ── Shared noise source (looping pink noise) ──
+  function makeNoise() {
+    const src = ctx.createBufferSource();
+    src.buffer = getNoiseBuffer(ctx);
+    src.loop = true;
+    src.loopStart = Math.random() * 2; // random start avoids phase correlation
+    allNodes.push(src);
+    return src;
+  }
+
+  if (isInhale) {
+    // ═══ INHALE ═══
+    // Layer 1: High-frequency turbulence — air rushing through narrow nasal passage
+    const n1 = makeNoise();
+    const hp1 = ctx.createBiquadFilter(); hp1.type='highpass'; hp1.frequency.value=1600; hp1.Q.value=0.7;
+    const bp1 = ctx.createBiquadFilter(); bp1.type='bandpass'; bp1.frequency.value=3200; bp1.Q.value=1.2;
+    const g1 = ctx.createGain(); g1.gain.value=0.55;
+    n1.connect(hp1); hp1.connect(bp1); bp1.connect(g1); g1.connect(master);
+
+    // Layer 2: Mid resonance — throat/pharynx formant
+    const n2 = makeNoise();
+    const bp2 = ctx.createBiquadFilter(); bp2.type='bandpass'; bp2.frequency.value=900; bp2.Q.value=2.5;
+    const g2 = ctx.createGain(); g2.gain.value=0.30;
+    n2.connect(bp2); bp2.connect(g2); g2.connect(master);
+
+    // Layer 3: Very soft low body — chest expanding
+    const n3 = makeNoise();
+    const lp3 = ctx.createBiquadFilter(); lp3.type='lowpass'; lp3.frequency.value=280; lp3.Q.value=0.5;
+    const g3 = ctx.createGain(); g3.gain.value=0.15;
+    n3.connect(lp3); lp3.connect(g3); g3.connect(master);
+
+    // Inhale envelope: starts hesitant, builds to full, slight taper at end
+    // Real inhale: quiet start → acceleration → full flow → natural taper
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.linearRampToValueAtTime(0.08,  now + dur*0.08);  // initial air catch
+    master.gain.linearRampToValueAtTime(0.38,  now + dur*0.45);  // build
+    master.gain.linearRampToValueAtTime(0.42,  now + dur*0.75);  // peak flow
+    master.gain.linearRampToValueAtTime(0.18,  now + dur*0.92);  // natural slow
+    master.gain.linearRampToValueAtTime(0.0,   now + dur*0.99);  // end
+
+  } else {
+    // ═══ EXHALE ═══
+    // Layer 1: Warmer, lower turbulence — air over relaxed vocal cords
+    const n1 = makeNoise();
+    const bp1 = ctx.createBiquadFilter(); bp1.type='bandpass'; bp1.frequency.value=800; bp1.Q.value=1.6;
+    const lp1 = ctx.createBiquadFilter(); lp1.type='lowpass';  lp1.frequency.value=2200; lp1.Q.value=0.5;
+    const g1 = ctx.createGain(); g1.gain.value=0.60;
+    n1.connect(bp1); bp1.connect(lp1); lp1.connect(g1); g1.connect(master);
+
+    // Layer 2: Oral resonance — mouth slightly open, rounder sound
+    const n2 = makeNoise();
+    const bp2 = ctx.createBiquadFilter(); bp2.type='bandpass'; bp2.frequency.value=400; bp2.Q.value=3.0;
+    const g2 = ctx.createGain(); g2.gain.value=0.28;
+    n2.connect(bp2); bp2.connect(g2); g2.connect(master);
+
+    // Layer 3: Chest deflation — low rumble fading
+    const n3 = makeNoise();
+    const lp3 = ctx.createBiquadFilter(); lp3.type='lowpass'; lp3.frequency.value=200; lp3.Q.value=0.4;
+    const g3 = ctx.createGain(); g3.gain.value=0.20;
+    n3.connect(lp3); lp3.connect(g3); g3.connect(master);
+
+    // Exhale envelope: starts strong (lung pressure), gradually decreases
+    // Real exhale: immediate flow → gradual pressure loss → quiet tail
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.linearRampToValueAtTime(0.42,  now + dur*0.04);  // immediate push
+    master.gain.linearRampToValueAtTime(0.38,  now + dur*0.25);  // steady flow
+    master.gain.linearRampToValueAtTime(0.22,  now + dur*0.60);  // pressure dropping
+    master.gain.linearRampToValueAtTime(0.08,  now + dur*0.85);  // nearly done
+    master.gain.linearRampToValueAtTime(0.0,   now + dur*0.99);  // end
+  }
+
+  allNodes.forEach(n => n.start(now));
+  activeNodes = allNodes;
+  activeGain  = master;
+}
+
+/* ════════════════════════════════
+   SOUND MODE
+   ════════════════════════════════ */
+let soundMode = 'tones'; // 'tones' | 'breath' | 'off'
+
+document.querySelectorAll('.sound-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    soundMode = btn.dataset.mode;
+    document.querySelectorAll('.sound-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (soundMode === 'off') stopActiveSound(0.2);
+  });
+});
+
+function triggerRings(phaseId){
+  const c=PHASE_COLORS[phaseId]||'#4a9eff';
+  [ring1,ring2].forEach((r,i)=>{r.style.borderColor=c+'88';r.style.animation='none';r.offsetHeight;r.style.animation=`ringPulse ${i===0?'0.9s':'1.1s'} ease-out forwards`;});
+}
+function easeInOut(t){return t<0.5?2*t*t:-1+(4-2*t)*t;}
+
+function updateOrb(phaseId,progress){
+  let scale=1;
+  if(phaseId==='inhale'||phaseId==='recovery') scale=0.82+0.36*easeInOut(progress);
+  else if(phaseId==='exhale') scale=1.18-0.36*easeInOut(progress);
+  else if(phaseId==='hold1') scale=1.18;
+  else scale=0.82;
+  orb.style.transform=`scale(${scale.toFixed(3)})`;
+  const a=0.3+scale*0.26;
+  orb.style.boxShadow=`0 0 ${28+scale*28}px rgba(74,158,255,${a.toFixed(2)}),0 0 70px rgba(74,158,255,.14),inset 0 0 18px rgba(255,255,255,.1)`;
+}
+
+/* ════════════════════════════════
+   TABS
+   ════════════════════════════════ */
+let currentTab='free';
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(running) return;
+    currentTab=btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+currentTab).classList.add('active');
+  });
+});
+
+/* ── Box summary live update ── */
+function updateBoxSummary(){
+  const s=+(document.getElementById('b-side').value)||4;
+  document.getElementById('box-summary').innerHTML=`שאיפה <b>${s}″</b> · עצירה <b>${s}″</b> · נשיפה <b>${s}″</b> · עצירה <b>${s}″</b>`;
+}
+document.getElementById('b-side').addEventListener('input',updateBoxSummary);
+updateBoxSummary();
+
+/* ── Wim Hof hold fields ── */
+function buildWimHolds(){
+  const r=+(document.getElementById('w-rounds').value)||3;
+  const container=document.getElementById('wh-holds');
+  // preserve existing values
+  const existing=[];
+  container.querySelectorAll('input').forEach(i=>existing.push(i.value));
+  container.innerHTML='';
+  for(let i=0;i<r;i++){
+    const row=document.createElement('div');row.className='wh-hold-row';
+    const val=existing[i]||'60';
+    row.innerHTML=`<span>עצירה סבב ${i+1}</span><div class="field" style="margin:0"><input type="number" class="wh-hold-input" value="${val}" min="5" max="300" step="5" style="width:80px"></div><span>שנ'</span>`;
+    container.appendChild(row);
+  }
+}
+document.getElementById('w-rounds').addEventListener('input',buildWimHolds);
+buildWimHolds();
+
+/* ── Free presets ── */
+const FREE_PRESETS={'478':{inhale:4,hold1:7,exhale:8,hold2:0},'box4':{inhale:4,hold1:4,exhale:4,hold2:4},'calm':{inhale:4,hold1:0,exhale:6,hold2:2}};
+document.getElementById('free-presets').addEventListener('click',e=>{
+  const btn=e.target.closest('.preset-btn');if(!btn)return;
+  const p=FREE_PRESETS[btn.dataset.pre];
+  document.getElementById('f-inhale').value=p.inhale;
+  document.getElementById('f-hold1').value=p.hold1;
+  document.getElementById('f-exhale').value=p.exhale;
+  document.getElementById('f-hold2').value=p.hold2;
+  document.querySelectorAll('#free-presets .preset-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+});
+
+/* ════════════════════════════════
+   TIBETAN BOWL — synthesized alert
+   Two strikes, ~1.2s apart
+   ════════════════════════════════ */
+function playBowlStrike(delayFromNow = 0) {
+  const ctx = getCtx();
+  const t = ctx.currentTime + delayFromNow;
+
+  // Tibetan bowl: mix of inharmonic partials with long ring-out
+  // Fundamental ~220Hz + characteristic overtones
+  const partials = [
+    { freq: 220,  amp: 1.00, decay: 4.5 },
+    { freq: 428,  amp: 0.60, decay: 3.8 },
+    { freq: 660,  amp: 0.30, decay: 3.0 },
+    { freq: 880,  amp: 0.15, decay: 2.2 },
+    { freq: 1100, amp: 0.07, decay: 1.5 },
+  ];
+
+  // Master gain — short attack (mallet strike), very long decay
+  const master = ctx.createGain();
+  master.gain.setValueAtTime(0, t);
+  master.gain.linearRampToValueAtTime(0.45, t + 0.008); // hard strike
+  master.gain.exponentialRampToValueAtTime(0.001, t + 5.0); // long ring
+  master.connect(ctx.destination);
+
+  // Slight reverb via comb-delay
+  const rev = ctx.createDelay(0.08);
+  const revG = ctx.createGain(); revG.gain.value = 0.18;
+  rev.delayTime.value = 0.035;
+  rev.connect(revG); revG.connect(master);
+
+  partials.forEach(p => {
+    const osc = ctx.createOscillator();
+    const g   = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = p.freq;
+    // Each partial decays at its own rate — key to bowl realism
+    g.gain.setValueAtTime(p.amp, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + p.decay);
+    osc.connect(g); g.connect(master); g.connect(rev);
+    osc.start(t);
+    osc.stop(t + p.decay + 0.1);
+  });
+}
+
+function playBowlAlert() {
+  playBowlStrike(0);    // first strike immediately
+  playBowlStrike(1.4);  // second strike 1.4s later
+}
+
+let speechSpoken = new Set();
+let running=false,animFrame=null;
+let sessionStart=null,sessionDuration=0;
+let queue=[],queueIdx=0,phaseStart=null,lastPhaseId=null;
+let cycleCount=0,wimRound=0,wimBreath=0;
+
+/* --- build queue functions --- */
+
+function buildFreeQueue(){
+  const inhale=+(document.getElementById('f-inhale').value)||4;
+  const hold1=+(document.getElementById('f-hold1').value)||0;
+  const exhale=+(document.getElementById('f-exhale').value)||4;
+  const hold2=+(document.getElementById('f-hold2').value)||0;
+  const dur=+(document.getElementById('f-duration').value)||5;
+  // repeat cycle enough times to fill duration
+  const cycleDur=(inhale+hold1+exhale+hold2)*1000;
+  const totalMs=dur*60*1000;
+  const reps=Math.ceil(totalMs/cycleDur)+2;
+  const cycle=[];
+  if(inhale>0) cycle.push({id:'inhale',dur:inhale,label:''});
+  if(hold1>0)  cycle.push({id:'hold1', dur:hold1, label:''});
+  if(exhale>0) cycle.push({id:'exhale',dur:exhale,label:''});
+  if(hold2>0)  cycle.push({id:'hold2', dur:hold2, label:''});
+  const q=[];
+  for(let i=0;i<reps;i++) cycle.forEach(s=>q.push({...s,cycle:i+1}));
+  return {queue:q,durationMs:totalMs,mode:'time'};
+}
+
+function buildBoxQueue(){
+  const s=+(document.getElementById('b-side').value)||4;
+  const dur=+(document.getElementById('b-duration').value)||5;
+  const cycle=[
+    {id:'inhale',dur:s,label:''},
+    {id:'hold1', dur:s,label:''},
+    {id:'exhale',dur:s,label:''},
+    {id:'hold2', dur:s,label:''},
+  ];
+  const cycleDur=s*4*1000;
+  const totalMs=dur*60*1000;
+  const reps=Math.ceil(totalMs/cycleDur)+2;
+  const q=[];
+  for(let i=0;i<reps;i++) cycle.forEach(st=>q.push({...st,cycle:i+1}));
+  return {queue:q,durationMs:totalMs,mode:'time'};
+}
+
+function buildWimQueue(){
+  const rounds=+(document.getElementById('w-rounds').value)||3;
+  const pace=+(document.getElementById('w-pace').value)||5;
+  const holdInputs=document.querySelectorAll('.wh-hold-input');
+  const holds=Array.from(holdInputs).map(i=>+(i.value)||60);
+  const BREATHS=30;
+  const q=[];
+  for(let r=0;r<rounds;r++){
+    for(let b=0;b<BREATHS;b++){
+      const isLast2 = (b >= BREATHS-2); // breaths 29,30 get visual highlight
+      // Announce: two bowl strikes on the EXHALE of breath 27
+      // so user hears them while exhaling breath 27, before last 2 begin
+      const announceOnExhale = (b === BREATHS-4); // breath 27 (0-indexed: 26)
+      q.push({
+        id:'inhale', dur:pace,
+        label:`סבב ${r+1} · נשימה ${b+1}/${BREATHS}`,
+        round:r+1, breath:b+1, last2:isLast2
+      });
+      q.push({
+        id:'exhale', dur:pace,
+        label:`סבב ${r+1} · נשימה ${b+1}/${BREATHS}`,
+        round:r+1, breath:b+1, last2:isLast2,
+        announce: announceOnExhale ? 'שתי נשימות אחרונות' : null
+      });
+    }
+    q.push({id:'hold2',    dur:holds[r]||60, label:`סבב ${r+1} · עצירת נשימה`,    round:r+1,breath:0,holdPhase:true});
+    q.push({id:'recovery', dur:15,           label:`סבב ${r+1} · שאיפת התאוששות`,round:r+1,breath:0});
+    q.push({id:'exhale',   dur:2,            label:`סבב ${r+1} · נשיפה`,           round:r+1,breath:0});
+    if(r<rounds-1){
+      q.push({id:'break',  dur:7,            label:`הפסקה לפני סבב ${r+2}`,        round:r+1,breath:0});
+    }
+  }
+  const totalMs=q.reduce((s,p)=>s+p.dur*1000,0);
+  return {queue:q,durationMs:totalMs,mode:'sequence'};
+}
+
+/* --- start / stop --- */
+startBtn.addEventListener('click',()=>{
+  getCtx();  let built;
+  if(currentTab==='free') built=buildFreeQueue();
+  else if(currentTab==='box') built=buildBoxQueue();
+  else built=buildWimQueue();
+
+  queue=built.queue;
+  sessionDuration=built.durationMs;
+  queueIdx=0;cycleCount=0;
+  speechSpoken=new Set();
+  running=true;lastPhaseId=null;
+  sessionStart=performance.now();
+  phaseStart=sessionStart;
+  startBtn.disabled=true;stopBtn.disabled=false;
+  document.getElementById('settingsCard').style.opacity='.45';
+  document.getElementById('settingsCard').style.pointerEvents='none';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.style.pointerEvents='none');
+  if(currentTab==='wim'){statALabel.textContent='סבב';} else {statALabel.textContent='מחזורים';}
+  loop(sessionStart);
+});
+
+stopBtn.addEventListener('click',stopSession);
+
+function stopSession(){
+  running=false;
+  stopActiveSound(0.3);
+  cancelAnimationFrame(animFrame);
+  startBtn.disabled=false;stopBtn.disabled=true;
+  document.getElementById('settingsCard').style.opacity='1';
+  document.getElementById('settingsCard').style.pointerEvents='';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.style.pointerEvents='');
+  phaseLabel.textContent='מוכן להתחיל';phaseLabel.style.color='';
+  subLabel.textContent='';
+  phaseBar.style.width='0%';orb.style.transform='';
+  ring1.style.animation='';ring2.style.animation='';
+  statA.textContent='—';statB.textContent='—';
+}
+
+function finishSession(){
+  running=false;stopActiveSound(0.3);cancelAnimationFrame(animFrame);
+  startBtn.disabled=false;stopBtn.disabled=true;
+  document.getElementById('settingsCard').style.opacity='1';
+  document.getElementById('settingsCard').style.pointerEvents='';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.style.pointerEvents='');
+  let msg='';
+  if(currentTab==='wim') msg=`סבבים: ${+(document.getElementById('w-rounds').value)} | נשימות: ${+(document.getElementById('w-rounds').value)*30}`;
+  else msg=`מחזורים: ${cycleCount}`;
+  finishedStats.textContent=msg;
+  finishedBanner.classList.add('show');
+}
+
+function closeBanner(){
+  finishedBanner.classList.remove('show');
+  phaseLabel.textContent='מוכן להתחיל';phaseLabel.style.color='';
+  subLabel.textContent='';
+  phaseBar.style.width='0%';orb.style.transform='';
+  ring1.style.animation='';ring2.style.animation='';
+  statA.textContent='—';statB.textContent='—';
+}
+
+/* --- main loop --- */
+function loop(now){
+  if(!running) return;
+  if(queueIdx>=queue.length){finishSession();return;}
+
+  const elapsed=now-sessionStart;
+
+  // time-based mode: stop after duration
+  if(queue[0] && queue[0].mode===undefined){/* sequence always runs to end */}
+  const mode=currentTab==='wim'?'sequence':'time';
+  if(mode==='time' && elapsed>=sessionDuration){finishSession();return;}
+
+  const step=queue[queueIdx];
+  const phaseDur=step.dur*1000;
+  const phaseElapsed=now-phaseStart;
+  const progress=Math.min(phaseElapsed/phaseDur,1);
+
+  // labels
+  phaseLabel.textContent=PHASE_LABELS[step.id]||step.id;
+  phaseLabel.style.color=PHASE_COLORS[step.id]||'#fff';
+  phaseBar.style.background=PHASE_COLORS[step.id]||'#fff';
+  phaseBar.style.width=(progress*100)+'%';
+
+  // sub-label: highlight last 2 breaths
+  if(step.last2 && currentTab==='wim'){
+    subLabel.textContent = step.label || '';
+    subLabel.style.color = '#f59e0b';
+    subLabel.style.fontWeight = '600';
+  } else {
+    subLabel.textContent=step.label||'';
+    subLabel.style.color='';
+    subLabel.style.fontWeight='';
+  }
+
+  // bowl alert — two strikes at start of exhale of breath 27
+  if(step.announce && !speechSpoken.has(queueIdx)){
+    speechSpoken.add(queueIdx);
+    playBowlAlert();
+  }
+
+  // stats
+  if(mode==='time'){
+    const rem=Math.max(0,sessionDuration-elapsed);
+    const mm=String(Math.floor(rem/60000)).padStart(2,'0');
+    const ss=String(Math.floor((rem%60000)/1000)).padStart(2,'0');
+    statB.textContent=mm+':'+ss;
+    statA.textContent=cycleCount;
+  } else {
+    // wim: show round, time remaining in hold or breath count
+    statA.textContent=step.round||'—';
+    const remStep=Math.max(0,phaseDur-phaseElapsed);
+    const ss=String(Math.ceil(remStep/1000));
+    statB.textContent=ss+'″';
+  }
+
+  // orb
+  updateOrb(step.id,progress);
+
+  // sound
+  if(soundMode!=='off' && step.id!==lastPhaseId){
+    startSound(step.id, step.dur);
+    lastPhaseId=step.id;
+  } else if(soundMode==='off' && step.id!==lastPhaseId){
+    stopActiveSound(0.2);lastPhaseId=step.id;
+  }
+
+  // advance
+  if(progress>=1){
+    // count cycles for free/box
+    if(mode==='time'){
+      const next=queue[queueIdx+1];
+      if(!next || next.cycle!==(step.cycle)) cycleCount++;
+    }
+    queueIdx++;
+    phaseStart=now;
+  }
+
+  animFrame=requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>

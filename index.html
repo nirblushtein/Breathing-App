@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+כ<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
   <link rel="manifest" href="manifest.json">
@@ -755,7 +755,8 @@ if('serviceWorker' in navigator){
   <footer style="width:100%;max-width:720px;padding:16px 20px 40px;text-align:center;display:flex;gap:12px;justify-content:center;">
   <button onclick="document.getElementById('about-modal').style.display='flex'" style="background:none;border:1px solid rgba(74,158,255,0.3);color:rgba(74,158,255,0.7);padding:8px 20px;border-radius:20px;font-family:'Heebo',sans-serif;font-size:.8rem;cursor:pointer;letter-spacing:.06em;">אודות המפתח</button>
   <button onclick="document.getElementById('guide-modal').style.display='flex'" style="background:none;border:1px solid rgba(74,158,255,0.3);color:rgba(74,158,255,0.7);padding:8px 20px;border-radius:20px;font-family:'Heebo',sans-serif;font-size:.8rem;cursor:pointer;letter-spacing:.06em;">הנחיות שימוש</button>
-</footer>
+<button onclick="if(navigator.share){navigator.share({title:'תרגול נשימה',text:'אפליקציה לתרגול נשימה מודעת — חופשי, קופסא, Wim Hof',url:'https://nirblushtein.github.io/Breathing-App/'})}else{alert('העתק את הקישור: https://nirblushtein.github.io/Breathing-App/')}" style="background:none;border:1px solid rgba(74,158,255,0.3);color:rgba(74,158,255,0.7);padding:8px 20px;border-radius:20px;font-family:'Heebo',sans-serif;font-size:.8rem;cursor:pointer;letter-spacing:.06em;">שלח לחבר 🔗</button>
+  </footer>
 
 <div id="about-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)this.style.display='none'">
   <div style="background:#0f1a35;border:1px solid rgba(74,158,255,0.2);border-radius:16px;max-width:500px;width:100%;padding:28px 24px;max-height:85vh;overflow-y:auto;text-align:right;direction:rtl;">

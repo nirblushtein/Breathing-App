@@ -1,10 +1,9 @@
-const CACHE = 'breathing-v4';
+const CACHE = 'breathing-v5';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './icon.svg'
 ];
 
 self.addEventListener('install', e => {

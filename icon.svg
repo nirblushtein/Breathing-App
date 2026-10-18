@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="90" fill="#0a0f1e"/>
+  <radialGradient id="orb" cx="38%" cy="35%" r="60%">
+    <stop offset="0%" stop-color="#6bb8ff"/>
+    <stop offset="55%" stop-color="#1a5cbf"/>
+    <stop offset="100%" stop-color="#0a1f5c"/>
+  </radialGradient>
+  <circle cx="256" cy="210" r="105" fill="url(#orb)"/>
+  <circle cx="256" cy="210" r="105" fill="none" stroke="#4a9eff" stroke-width="3" opacity="0.55"/>
+  <text x="256" y="375" font-family="Arial,sans-serif" font-size="58" font-weight="800" fill="#4ab3ff" text-anchor="middle">Blue</text>
+  <text x="256" y="438" font-family="Arial,sans-serif" font-size="46" font-weight="700" fill="#7dd43f" text-anchor="middle">Connect</text>
+</svg>

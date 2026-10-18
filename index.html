@@ -57,7 +57,7 @@ main{width:100%;max-width:720px;padding:16px 16px 48px;display:flex;flex-directi
 
 /* orb stage */
 .stage{display:flex;flex-direction:column;align-items:center;padding:8px 0 16px;gap:14px;}
-.orb-wrap{position:relative;width:190px;height:190px;display:flex;align-items:center;justify-content:center;}
+.orb-wrap{position:relative;width:190px;height:190px;display:flex;align-items:center;justify-content:center;margin:0 auto;}
 .ring{position:absolute;border-radius:50%;border:1.5px solid rgba(74,158,255,.3);opacity:0;pointer-events:none;}
 .ring-1{width:190px;height:190px;}.ring-2{width:220px;height:220px;}
 @keyframes ringPulse{0%{opacity:.5;transform:scale(.88);}100%{opacity:0;transform:scale(1.1);}}
@@ -126,7 +126,9 @@ main{width:100%;max-width:720px;padding:16px 16px 48px;display:flex;flex-directi
       <div class="field"><label>עצירה אחרי שאיפה</label><input type="number" id="f-hold1" value="0" min="0" max="20" step="0.5"></div>
       <div class="field"><label>נשיפה (שנ')</label><input type="number" id="f-exhale" value="4" min="0.5" max="20" step="0.5"></div>
          <div class="field"><label>עצירה אחרי נשיפה</label><input type="number" id="f-hold2" value="0" min="0" max="20" step="0.5"></div>
+   </div>
   </div>
+
 
   <!-- BOX -->
   <div class="panel" id="panel-box">

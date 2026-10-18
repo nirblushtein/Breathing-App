@@ -752,6 +752,52 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js');
 }
 </script>
+  <footer style="width:100%;max-width:720px;padding:16px 20px 40px;text-align:center;display:flex;gap:12px;justify-content:center;">
+  <button onclick="document.getElementById('about-modal').style.display='flex'" style="background:none;border:1px solid rgba(74,158,255,0.3);color:rgba(74,158,255,0.7);padding:8px 20px;border-radius:20px;font-family:'Heebo',sans-serif;font-size:.8rem;cursor:pointer;letter-spacing:.06em;">אודות המפתח</button>
+  <button onclick="document.getElementById('guide-modal').style.display='flex'" style="background:none;border:1px solid rgba(74,158,255,0.3);color:rgba(74,158,255,0.7);padding:8px 20px;border-radius:20px;font-family:'Heebo',sans-serif;font-size:.8rem;cursor:pointer;letter-spacing:.06em;">הנחיות שימוש</button>
+</footer>
+
+<div id="about-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#0f1a35;border:1px solid rgba(74,158,255,0.2);border-radius:16px;max-width:500px;width:100%;padding:28px 24px;max-height:85vh;overflow-y:auto;text-align:right;direction:rtl;">
+    <button onclick="document.getElementById('about-modal').style.display='none'" style="float:left;background:none;border:none;color:#4a9eff;font-size:1.4rem;cursor:pointer;">×</button>
+    <h2 style="color:#4a9eff;font-size:1.1rem;font-weight:600;margin:0 0 16px;">אודות המפתח</h2>
+    <p style="color:#a0b4cc;font-size:.85rem;line-height:1.8;margin:0 0 16px;">הי, קוראים לי ניר בלושטיין – מטפל בתרפיה בנשימה, יזם, נשוי ואבא לשלושה ילדים.<br><br>
+    מאז ומתמיד נמשכתי לחדשנות, תנועה וצמיחה. לפני מספר שנים פגשתי את הנשימה – לא רק ככלי פיזיולוגי, אלא ככוח טרנספורמטיבי.<br><br>
+    מה שהתחיל מסקרנות פנימית הפך למסע עמוק של לימוד, חקירה והתפתחות במסגרת תוכנית המטפלים של נמרוד קאופמן במרכז לתרפיה בנשימה, והיום אני גם משמש כחבר צוות בתוכנית השנתית של המרכז.<br><br>
+    אני רואה בנשימה גשר חי בין גוף, נפש, תודעה ונשמה. אני מאמין שהנשימה היא אחד הכלים העוצמתיים ביותר לריפוי, להרחבת התודעה ולחיים בריאים מתוך נוכחות ואיזון.<br><br>
+    זו דרך שאני הולך בה, אישית ומקצועית — ורוצה לחלוק אותה עם עוד ועוד אנשים.<br><br>
+    <strong style="color:#7dd3a8;">מטרת האפליקציה לאפשר ולהנגיש נשימה מודעת בכל זמן ומקום.</strong></p>
+    <hr style="border:none;border-top:1px solid rgba(74,158,255,0.15);margin:16px 0;">
+    <p style="color:#a0b4cc;font-size:.85rem;line-height:1.8;margin:0;">מוזמנים ליצור איתי קשר להתייעצות או לתיאום סדנה:<br><br>
+    📞 <a href="tel:0546699366" style="color:#4a9eff;text-decoration:none;">054-669-9366</a><br><br>
+    🌐 <a href="https://www.neshimot.com/main-breathwork-workshop-beer-sheva" target="_blank" style="color:#4a9eff;text-decoration:none;">סדנאות נשימה</a></p>
+  </div>
+</div>
+
+<div id="guide-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#0f1a35;border:1px solid rgba(74,158,255,0.2);border-radius:16px;max-width:500px;width:100%;padding:28px 24px;max-height:85vh;overflow-y:auto;text-align:right;direction:rtl;">
+    <button onclick="document.getElementById('guide-modal').style.display='none'" style="float:left;background:none;border:none;color:#4a9eff;font-size:1.4rem;cursor:pointer;">×</button>
+    <h2 style="color:#4a9eff;font-size:1.1rem;font-weight:600;margin:0 0 16px;">כיצד לתרגל נשימה מודעת</h2>
+    <p style="color:#a0b4cc;font-size:.85rem;line-height:1.8;margin:0 0 16px;">הנשימה שלנו היא לוח בקרה — לכל פרמטר יש השפעה מיידית על הגוף והמוח.</p>
+    <h3 style="color:#7dd3a8;font-size:.9rem;margin:0 0 10px;">🌿 לרגיעה (פאראסימפטטי)</h3>
+    <ul style="color:#a0b4cc;font-size:.85rem;line-height:2;margin:0 0 16px;padding-right:16px;">
+      <li>נשמו דרך <strong style="color:#e0eaff;">האף</strong> — מאט ומסנן את האוויר</li>
+      <li>נשמו אל <strong style="color:#e0eaff;">הבטן</strong> — הפעילו את עצב הוואגוס</li>
+      <li>נשימה <strong style="color:#e0eaff;">רכה ושקטה</strong> — עוצמה נמוכה</li>
+      <li><strong style="color:#e0eaff;">הארכת הנשיפה</strong> — ככל שהנשיפה ארוכה יותר, הגוף נרגע יותר</li>
+    </ul>
+    <h3 style="color:#ff8c69;font-size:.9rem;margin:0 0 10px;">⚡ לאנרגיה ועירור (סימפטטי)</h3>
+    <ul style="color:#a0b4cc;font-size:.85rem;line-height:2;margin:0 0 16px;padding-right:16px;">
+      <li>נשמו דרך <strong style="color:#e0eaff;">הפה</strong> — מכניס אוויר מהיר</li>
+      <li>נשמו אל <strong style="color:#e0eaff;">החזה</strong> — נשימה שטחית וגבוהה</li>
+      <li>נשימה <strong style="color:#e0eaff;">עוצמתית ומלאה</strong></li>
+      <li><strong style="color:#e0eaff;">שאיפות חזקות וקצרות</strong></li>
+    </ul>
+    <div style="background:rgba(74,158,255,0.08);border-right:3px solid #4a9eff;padding:12px 14px;border-radius:8px;">
+      <p style="color:#e0eaff;font-size:.85rem;line-height:1.7;margin:0;">💡 <strong>כלל אצבע:</strong> רוצים להירגע? נשפו לאט פי שניים מהשאיפה, דרך האף, מהבטן.</p>
+    </div>
+  </div>
+</div>
 </body>
 
 </html>

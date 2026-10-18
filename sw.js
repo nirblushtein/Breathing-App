@@ -1,4 +1,4 @@
-const CACHE = 'breathing-v17';
+const CACHE = 'breathing-v50';
 const ASSETS = [
   './',
   './index.html',
